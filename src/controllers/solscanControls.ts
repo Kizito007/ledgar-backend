@@ -41,3 +41,24 @@ export const getTransaction = async (req: Request, res: Response) => {
     status: 0,
   });
 };
+
+export const getToken = async (req: Request, res: Response) => {
+  const { tokenAddress } = req.query;
+
+  const token = await axios.get(
+    `${url}/token/meta?tokenAddress=${tokenAddress}`,
+    {
+      headers: <any>{
+        accept: "application/json",
+        token: process.env.SOLSCAN_API_KEY,
+      },
+    }
+  );
+
+  // console.log(token.data);
+  res.status(200).send({
+    data: token.data,
+    message: "Token Details",
+    status: 0,
+  });
+};
