@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.solscanRoute = void 0;
+const express = require("express");
+exports.solscanRoute = express.Router();
+const solscanControls_1 = require("../controllers/solscanControls");
+exports.solscanRoute.get("/getAccountTransactions", solscanControls_1.getAccountTransactions);
+exports.solscanRoute.get("/getTransaction", solscanControls_1.getTransaction);
+exports.solscanRoute.get("/getTokens", solscanControls_1.getTokens);
+exports.solscanRoute.get("/getToken", solscanControls_1.getToken);
+exports.solscanRoute.get("/getAccount", solscanControls_1.getAccount);
+exports.solscanRoute.get("/getAccountTokens", solscanControls_1.getAccountTokens);
+exports.solscanRoute.get("/getSOLTransfers", solscanControls_1.getSOLTransfers);
+exports.solscanRoute.get("/getSPLTransfers", solscanControls_1.getSPLTransfers);
+exports.solscanRoute.get("/getTokenHolders", solscanControls_1.getTokenHolders);
+exports.solscanRoute.get("/getChainInfo", solscanControls_1.getChainInfo);
+exports.solscanRoute.get("/getLastTransaction", solscanControls_1.getLastTransaction);
