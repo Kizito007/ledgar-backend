@@ -1,11 +1,14 @@
 import express, { Express, Request, Response, Application } from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 //For env File
 dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 6000;
+
+app.use(cors());
 
 import { solscanRoute } from "./routes/solscanRoutes";
 
