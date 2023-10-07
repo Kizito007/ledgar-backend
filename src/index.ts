@@ -8,7 +8,11 @@ dotenv.config();
 const app: Application = express();
 const port = process.env.PORT || 6000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 import { solscanRoute } from "./routes/solscanRoutes";
 
