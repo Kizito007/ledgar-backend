@@ -1,26 +1,89 @@
 import express, { Request, Response } from "express";
+const web3 = require("@solana/web3.js");
 import axios from "axios";
 
-const url: String = "https://public-api.solscan.io";
+const url: string = "https://public-api.solscan.io";
+const heliusUrl = "https://api.helius.xyz/v0";
+const heliusApiKey: string | undefined = process.env.HELIUS_API_KEY;
+
+const solana = new web3.Connection(
+  "https://multi-weathered-needle.solana-testnet.discover.quiknode.pro/87ef395138153de117d7e6633139a451644f9cb7/"
+);
 
 export const getAccountTransactions = async (req: Request, res: Response) => {
   try {
-    const { account } = req.query;
+    const { address } = req.query;
 
-    const transaction = await axios.get(
-      `${url}/account/transactions?account=${account}`,
+    // const transaction = await axios.get(
+    //   `${url}/account/transactions?account=${account}`,
+    //   {
+    //     headers: <any>{
+    //       accept: "application/json",
+    //       token: process.env.SOLSCAN_API_KEY,
+    //     },
+    //   }
+    // );
+
+    const transactions = await axios.get(
+      `${heliusUrl}/addresses/${address}/transactions?api-key=${heliusApiKey}`
+      // {
+      //   headers: <any>{
+      //     accept: "application/json",
+      //     token: process.env.SOLSCAN_API_KEY,
+      //   },
+      // }
+    );
+
+    res.status(200).send({
+      data: transactions.data,
+      message: "Account Transactions",
+      status: 0,
+    });
+  } catch (err: any) {
+    res.status(500).send({ data: {}, message: err.message });
+  }
+};
+
+export const getBalances = async (req: Request, res: Response) => {
+  try {
+    const { address } = req.query;
+
+    const transactions = await axios.get(
+      `${heliusUrl}/addresses/${address}/balances?api-key=${heliusApiKey}`
+    );
+
+    res.status(200).send({
+      data: transactions.data,
+      message: "Account Balances",
+      status: 0,
+    });
+  } catch (err: any) {
+    res.status(500).send({ data: {}, message: err.message });
+  }
+};
+
+export const searchAssets = async (req: Request, res: Response) => {
+  try {
+    const { address, page, limit } = req.query;
+
+    const assets = await axios.post(
+      `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`,
       {
-        headers: <any>{
-          accept: "application/json",
-          token: process.env.SOLSCAN_API_KEY,
+        jsonrpc: "2.0",
+        id: "my-id",
+        method: "searchAssets",
+        params: {
+          ownerAddress: address,
+          compressed: true,
+          page, // Starts at 1
+          limit,
         },
       }
     );
 
-    // console.log(transaction.data);
     res.status(200).send({
-      data: transaction.data,
-      message: "Account Transactions",
+      data: assets.data,
+      message: "Assets",
       status: 0,
     });
   } catch (err: any) {
@@ -176,16 +239,19 @@ export const getTransaction = async (req: Request, res: Response) => {
   try {
     const { txhash } = req.query;
 
-    const transaction = await axios.get(`${url}/transaction/${txhash}`, {
-      headers: <any>{
-        accept: "application/json",
-        token: process.env.SOLSCAN_API_KEY,
-      },
+    // const transaction = await axios.get(`${url}/transaction/${txhash}`, {
+    //   headers: <any>{
+    //     accept: "application/json",
+    //     token: process.env.SOLSCAN_API_KEY,
+    //   },
+    // });
+
+    const transaction = await solana.getTransaction(txhash, {
+      maxSupportedTransactionVersion: 0,
     });
 
-    // console.log(transaction.data);
     res.status(200).send({
-      data: transaction.data,
+      data: transaction,
       message: "Transaction Details",
       status: 0,
     });
@@ -194,23 +260,22 @@ export const getTransaction = async (req: Request, res: Response) => {
   }
 };
 
-export const getToken = async (req: Request, res: Response) => {
+export const getTokenMetadata = async (req: Request, res: Response) => {
   try {
-    const { tokenAddress } = req.query;
+    const { nftAddresses } = req.body;
 
-    const token = await axios.get(
-      `${url}/token/meta?tokenAddress=${tokenAddress}`,
+    const tokens = await axios.post(
+      `${heliusUrl}/token-metadata?api-key=${heliusApiKey}`,
       {
-        headers: <any>{
-          accept: "application/json",
-          token: process.env.SOLSCAN_API_KEY,
-        },
+        mintAccounts: nftAddresses,
+        includeOffChain: true,
+        disableCache: false,
       }
     );
 
     // console.log(token.data);
     res.status(200).send({
-      data: token.data,
+      data: tokens.data,
       message: "Token Details",
       status: 0,
     });

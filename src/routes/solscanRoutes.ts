@@ -5,7 +5,9 @@ import {
   getAccountTransactions,
   getTransaction,
   getTokens,
-  getToken,
+  getTokenMetadata,
+  getBalances,
+  searchAssets,
   getAccount,
   getAccountTokens,
   getSOLTransfers,
@@ -16,9 +18,11 @@ import {
 } from "../controllers/solscanControls";
 
 solscanRoute.get("/getAccountTransactions", getAccountTransactions);
+solscanRoute.get("/getBalances", getBalances);
+solscanRoute.post("/searchAssets", searchAssets);
 solscanRoute.get("/getTransaction", getTransaction);
 solscanRoute.get("/getTokens", getTokens);
-solscanRoute.get("/getToken", getToken);
+solscanRoute.post("/getToken", getTokenMetadata);
 solscanRoute.get("/getAccount", getAccount);
 solscanRoute.get("/getAccountTokens", getAccountTokens);
 solscanRoute.get("/getSOLTransfers", getSOLTransfers);
